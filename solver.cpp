@@ -13,7 +13,7 @@ int main(){
                                             {"r6c0","r6c1","r6c2","r6c3","r6c4","r6c5","r6c6","r6c7"},
                                             {"r7c0","r7c1","r7c2","r7c3","r7c4","r7c5","r7c6","r7c7"}};
 
-    vector<vector<string>> possibleBlocks = {{"r2c3", "r3c3", "r3c2", "r3c4"}};
+    vector<vector<string>> possibleBlocks = {{"r2c3", "r2c5", "r2c4", "r3c5", "r4c5"}};
     vector<vector<int>> possibleBlocksInt;
     vector<vector<string>> blastTemplateCopy;
     while(true){
@@ -41,61 +41,69 @@ int main(){
             possibleBlocksInt.push_back({valRowNum, valColNum});
         }
     }
+
     vector<int> previousVector = {-1, -1};
-    size_t dridx;
-    size_t dcidx;
-    for(const auto &blockVector : possibleBlocksInt){
-        for(size_t ridx=0; ridx<8; ++ridx){
-            for(size_t cidx=0; cidx<8; ++cidx){
-                const auto &val = blastTemplate[ridx][cidx];
-                if(val.find('o') != std::string::npos || val.find('p') != std::string::npos){
-                    continue;
+    size_t dridx = 0;
+    size_t dcidx = 0;
+    size_t idx = 0;
+    for(size_t ridx=0;ridx<8;ridx++){
+        for(size_t cidx=0;cidx<8;cidx++){
+            const auto &val = blastTemplate[ridx][cidx];
+            if(val.find('o') != std::string::npos || val.find('p') != std::string::npos){
+                continue;
+            }
+            if(blastTemplateCopy.empty())
+                blastTemplateCopy.assign(blastTemplate.begin(), blastTemplate.end());            
+
+            for(const auto &blockVector : possibleBlocksInt){
+                if(idx != 0){
+                    // all the possible positions
+                    if((blockVector[0] > previousVector[0] ) && (blockVector[1] > previousVector[1])){
+                        dridx = ridx+(blockVector[0]-previousVector[0]);
+                        dcidx = cidx+(blockVector[1]-previousVector[1]);
+                    }
+                    else if((blockVector[0] < previousVector[0] ) && (blockVector[1] > previousVector[1])){
+                        dridx = ridx-(previousVector[0]-blockVector[0]);
+                        dcidx = cidx+(blockVector[1]-previousVector[1]);
+                    }
+                    else if((blockVector[0] < previousVector[0] ) && (blockVector[1] < previousVector[1])){
+                        dridx = ridx-(previousVector[0]-blockVector[0]);
+                        dcidx = cidx-(previousVector[1]-blockVector[1]);
+                    }
+                    else if((blockVector[0] > previousVector[0] ) && (blockVector[1] < previousVector[1])){
+                        dridx = ridx+(blockVector[0]-previousVector[0]);
+                        dcidx = cidx-(previousVector[1]-blockVector[1]);
+                    }
+                    else if((blockVector[0] == previousVector[0] ) && (blockVector[1] > previousVector[1])){
+                        dridx = ridx;
+                        dcidx = cidx+(blockVector[1]-previousVector[1]);
+                    }
+                    else if((blockVector[0] == previousVector[0] ) && (blockVector[1] < previousVector[1])){
+                        dridx = ridx;
+                        dcidx = cidx-(previousVector[1]-blockVector[1]);
+                    }
+                    else if((blockVector[0] > previousVector[0] ) && (blockVector[1] == previousVector[1])){
+                        dridx = ridx+(blockVector[0]-previousVector[0]);
+                        dcidx = cidx;
+                    }
+                    else if((blockVector[0] < previousVector[0] ) && (blockVector[1] == previousVector[1])){
+                        dridx = ridx-(previousVector[0]-blockVector[0]);
+                        dcidx = cidx;
+                    }
                 }
-                if(blastTemplateCopy.empty())
-                    blastTemplateCopy.assign(blastTemplate.begin(), blastTemplate.end());
-                
-                // possible positions
-                if((blockVector[0] > previousVector[0] ) && (blockVector[0] > previousVector[0])){
-                    dridx = ridx+1;
-                    dcidx = cidx+1;
-                }
-                else if((blockVector[0] < previousVector[0] ) && (blockVector[0] > previousVector[0])){
-                    dridx = ridx-1;
-                    dcidx = cidx+1;
-                }
-                else if((blockVector[0] < previousVector[0] ) && (blockVector[0] < previousVector[0])){
-                    dridx = ridx-1;
-                    dcidx = cidx-1;
-                }
-                else if((blockVector[0] > previousVector[0] ) && (blockVector[0] < previousVector[0])){
-                    dridx = ridx+1;
-                    dcidx = cidx-1;
-                }
-                else if((blockVector[0] == previousVector[0] ) && (blockVector[0] > previousVector[0])){
-                    dridx = ridx;
-                    dcidx = cidx+1;
-                }
-                else if((blockVector[0] == previousVector[0] ) && (blockVector[0] < previousVector[0])){
-                    dridx = ridx;
-                    dcidx = cidx-1;
-                }
-                else if((blockVector[0] > previousVector[0] ) && (blockVector[0] == previousVector[0])){
-                    dridx = ridx+1;
-                    dcidx = cidx;
-                }
-                else if((blockVector[0] < previousVector[0] ) && (blockVector[0] == previousVector[0])){
-                    dridx = ridx-1;
-                    dcidx = cidx;
-                }
-                
                 // appending
                 if (dridx < blastTemplate.size() && dcidx < blastTemplate[dridx].size()){
-                    if((blastTemplate[dridx][dcidx].find('p') == std::string::npos) && (blastTemplate[dridx][dcidx].find('o') == std::string::npos))
+                    if((blastTemplate[dridx][dcidx].find('p') == std::string::npos) && (blastTemplate[dridx][dcidx].find('o') == std::string::npos)){
                         blastTemplate[dridx][dcidx] += 'p';
+                        possibleBlocksInt.erase(possibleBlocksInt.begin());
+                        break;                        
+                    }
+
                 }
+            previousVector = blockVector;    
             }
+            idx++;
         }
-        previousVector = blockVector;
     }        
 
     // for(auto vector : possibleBlocksInt){
@@ -109,7 +117,8 @@ int main(){
             cout << val << ' ';
         cout << '\n';
     }
+    
+    cout << "HELLOZX";
 
     return 0;
 }
-
