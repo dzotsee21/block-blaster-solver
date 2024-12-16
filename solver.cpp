@@ -16,7 +16,7 @@ int main(){
                                             {"r6c0","r6c1","r6c2","r6c3","r6c4","r6c5","r6c6","r6c7"},
                                             {"r7c0","r7c1","r7c2","r7c3","r7c4","r7c5","r7c6","r7c7"}};
 
-    vector<vector<string>> possibleBlocks = {{"r7c0", "r6c0", "r6c1", "r5c1"}, {"r7c3", "r7c4"}};
+    vector<vector<string>> possibleBlocks = {{"r7c3", "r7c4", "r6c3", "r6c4"}, {"r7c3", "r7c4", "r6c3", "r6c4"}};
     vector<vector<vector<int>>> possibleBlocksInt;
     vector<vector<string>> blastTemplateCopy;
     int possibleBlocksSize = 0;
@@ -78,30 +78,30 @@ int main(){
         rslt.push_back({blockVals});
     }
 
-    for(int i = 0; i<=possibleBlocks.size(); i++){
-        vector<vector<int>> freeSlots = blastFreeSlots(blastTemplate);
-        for(auto &slotVector : freeSlots){
-            bool err = false;
-            blastTemplateCopy.assign(blastTemplate.begin(), blastTemplate.end());
-            for(auto &blockVal : rslt){
-                for(auto &val : blockVal){
-                    if(0 <= slotVector[0]+val[0] < 8 && 0 <= slotVector[1]+val[1] < 8){
-                        vector<int> target = {slotVector[0]+val[0], slotVector[1]+val[1]};
-                        if(find(freeSlots.begin(), freeSlots.end(), target) != freeSlots.end()){
-                            if(blastTemplateCopy[slotVector[0]+val[0]][slotVector[1]+val[1]].find('o') == string::npos)
-                                blastTemplateCopy[slotVector[0]+val[0]][slotVector[1]+val[1]] += 'o';
-                        } else{
-                            err = true;
-                            break;
+    vector<vector<int>> freeSlots = blastFreeSlots(blastTemplate);
+    for(auto &slotVector : freeSlots){
+        blastTemplateCopy.assign(blastTemplate.begin(), blastTemplate.end());
+        bool err = false;
+        for(auto &blockVal : rslt){
+            for(auto &val : blockVal){
+                if(0 <= slotVector[0]+val[0] < 8 && 0 <= slotVector[1]+val[1] < 8){
+                    vector<int> target = {slotVector[0]+val[0], slotVector[1]+val[1]};
+                    if(find(freeSlots.begin(), freeSlots.end(), target) != freeSlots.end()){
+                        if(blastTemplateCopy[slotVector[0]+val[0]][slotVector[1]+val[1]].find('o') == string::npos){
+                            blastTemplateCopy[slotVector[0]+val[0]][slotVector[1]+val[1]] += 'o';
+                            cout << 'i' << endl;
                         }
+                    } else{
+                        err = true;
+                        break;
                     }
                 }
             }
-            if(!err){
-                blastTemplate = blastTemplateCopy;
-                break;
-            }
         }
+        if(!err){
+            blastTemplate = blastTemplateCopy;
+            break;
+        }                
     }
 
     // for(size_t ridx=0;ridx<8;ridx++){
