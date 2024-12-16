@@ -3,6 +3,9 @@
 #include <vector>
 using namespace std;
 
+
+vector<vector<int>> blastFreeSlots(vector<vector<string>> blastTemplate);
+
 int main(){
     vector<vector<string>> blastTemplate = {{"r0c0","r0c1","r0c2","r0c3","r0c4","r0c5","r0c6","r0c7"},
                                             {"r1c0","r1c1","r1c2","r1c3","r1c4","r1c5","r1c6","r1c7"},
@@ -13,8 +16,8 @@ int main(){
                                             {"r6c0","r6c1","r6c2","r6c3","r6c4","r6c5","r6c6","r6c7"},
                                             {"r7c0","r7c1","r7c2","r7c3","r7c4","r7c5","r7c6","r7c7"}};
 
-    vector<vector<string>> possibleBlocks = {{"r6c2", "r7c2", "r6c3", "r7c3"}, {"r6c2", "r7c2"}};
-    vector<vector<int>> possibleBlocksInt;
+    vector<vector<string>> possibleBlocks = {{"r7c0", "r6c0", "r6c1", "r5c1"}, {"r7c3", "r7c4"}};
+    vector<vector<vector<int>>> possibleBlocksInt;
     vector<vector<string>> blastTemplateCopy;
     int possibleBlocksSize = 0;
     for(auto vector : possibleBlocks){
@@ -45,77 +48,107 @@ int main(){
     int dridx = 0;
     int dcidx = 0;
     vector<int> previousVector = {-1, -1};
-    vector<vector<int>> rslt;
+    vector<vector<vector<int>>> rslt;
 
     for(const auto &block : possibleBlocks){
+        vector<vector<int>> blockVals;
         for(const auto &val : block){
             int valRowNum = val[1] - '0'; // get number value of block table row
             int valColNum = val[3] - '0'; // get number value of block table row
-            possibleBlocksInt.push_back({valRowNum, valColNum});
+            blockVals.push_back({valRowNum, valColNum});
         }
+        possibleBlocksInt.push_back({blockVals});
     }
 
-    for(const auto &blockVector : possibleBlocksInt){
-        if(idx != 0){
-            // all the possible positions
-            dridx += blockVector[0] - previousVector[0];
-            dcidx += blockVector[1] - previousVector[1];
-            rslt.push_back({dridx, dcidx});
-        }
-        if(idx == 0){
-            rslt.push_back({dridx, dcidx});
-        }
-        previousVector.assign(blockVector.begin(), blockVector.end());
-        idx++;
-    }
-    for(auto v : rslt)
-        cout << v[0] << " - " << v[1] << endl;
-
-    for(size_t ridx=0;ridx<8;ridx++){
-        for(size_t cidx=0;cidx<8;cidx++){
-            // const auto &val = blastTemplate[ridx][cidx];
-            // if(val.find('o') != std::string::npos || val.find('p') != std::string::npos){
-            //     continue;
-            // }
-            blastTemplateCopy.assign(blastTemplate.begin(), blastTemplate.end());
-
-            // appending
-            bool err = false;
-            if(rslt.size() == 0){
-                for(auto row : blastTemplate){
-                    for(auto val : row)
-                        cout << val << ' ';
-                    cout << '\n';
-                }
-                exit(0);
+    for(const auto &block : possibleBlocksInt){
+        vector<vector<int>> blockVals;
+        for(const auto &blockVector : block){
+            if(idx != 0){
+                // all the possible positions
+                dridx += blockVector[0] - previousVector[0];
+                dcidx += blockVector[1] - previousVector[1];
+                blockVals.push_back({dridx, dcidx});
             }
-            for(auto &v : rslt){
-                if((ridx+v[0] < blastTemplateCopy.size()) && (cidx+v[1] < blastTemplateCopy[ridx+v[0]].size())){
-                    // cout << v[0] << " - " << v[1] << endl;
-                    if((blastTemplateCopy[ridx+v[0]][cidx+v[1]].find('p') == string::npos) && (blastTemplateCopy[ridx+v[0]][cidx+v[1]].find('o') == string::npos)){
-                        blastTemplateCopy[ridx+v[0]][cidx+v[1]] += 'p';
-                        int pcount = 0;
-                        for(auto row : blastTemplate){
-                            for(auto val : row){
-                                if(val.find('p') != string::npos)
-                                    pcount++;                                
-                            }
+            if(idx == 0){
+                blockVals.push_back({dridx, dcidx});
+            }
+            previousVector.assign(blockVector.begin(), blockVector.end());
+            idx++;
+        }
+        rslt.push_back({blockVals});
+    }
+
+    for(int i = 0; i<=possibleBlocks.size(); i++){
+        vector<vector<int>> freeSlots = blastFreeSlots(blastTemplate);
+        for(auto &slotVector : freeSlots){
+            bool err = false;
+            blastTemplateCopy.assign(blastTemplate.begin(), blastTemplate.end());
+            for(auto &blockVal : rslt){
+                for(auto &val : blockVal){
+                    if(0 <= slotVector[0]+val[0] < 8 && 0 <= slotVector[1]+val[1] < 8){
+                        vector<int> target = {slotVector[0]+val[0], slotVector[1]+val[1]};
+                        if(find(freeSlots.begin(), freeSlots.end(), target) != freeSlots.end()){
+                            if(blastTemplateCopy[slotVector[0]+val[0]][slotVector[1]+val[1]].find('o') == string::npos)
+                                blastTemplateCopy[slotVector[0]+val[0]][slotVector[1]+val[1]] += 'o';
+                        } else{
+                            err = true;
+                            break;
                         }
-                        if(pcount >= possibleBlocksSize)
-                            goto printvals;
                     }
-                } else{
-                    err = true;
-                    break;
                 }
             }
             if(!err){
                 blastTemplate = blastTemplateCopy;
-                rslt.erase(rslt.begin());
                 break;
             }
         }
     }
+
+    // for(size_t ridx=0;ridx<8;ridx++){
+    //     for(size_t cidx=0;cidx<8;cidx++){
+    //         // const auto &val = blastTemplate[ridx][cidx];
+    //         // if(val.find('o') != std::string::npos || val.find('p') != std::string::npos){
+    //         //     continue;
+    //         // }
+    //         blastTemplateCopy.assign(blastTemplate.begin(), blastTemplate.end());
+
+    //         // appending
+    //         bool err = false;
+    //         if(rslt.size() == 0){
+    //             for(auto row : blastTemplate){
+    //                 for(auto val : row)
+    //                     cout << val << ' ';
+    //                 cout << '\n';
+    //             }
+    //             exit(0);
+    //         }
+    //         for(auto &v : rslt){
+    //             if((ridx+v[0] < blastTemplateCopy.size()) && (cidx+v[1] < blastTemplateCopy[ridx+v[0]].size())){
+    //                 // cout << v[0] << " - " << v[1] << endl;
+    //                 if((blastTemplateCopy[ridx+v[0]][cidx+v[1]].find('p') == string::npos) && (blastTemplateCopy[ridx+v[0]][cidx+v[1]].find('o') == string::npos)){
+    //                     blastTemplateCopy[ridx+v[0]][cidx+v[1]] += 'p';
+    //                     int pcount = 0;
+    //                     for(auto row : blastTemplate){
+    //                         for(auto val : row){
+    //                             if(val.find('p') != string::npos)
+    //                                 pcount++;                                
+    //                         }
+    //                     }
+    //                     if(pcount >= possibleBlocksSize)
+    //                         goto printvals;
+    //                 }
+    //             } else{
+    //                 err = true;
+    //                 break;
+    //             }
+    //         }
+    //         if(!err){
+    //             blastTemplate = blastTemplateCopy;
+    //             rslt.erase(rslt.begin());
+    //             break;
+    //         }
+    //     }
+    // }
 
     // for(auto vector : possibleBlocksInt){
     //     for(auto val : vector)
@@ -133,4 +166,16 @@ int main(){
     cout << "=!";
 
     return 0;
+}
+
+
+vector<vector<int>> blastFreeSlots(vector<vector<string>> blastTemplate){
+    vector<vector<int>> freeSlots;
+    for(int ridx=0; ridx<8;ridx++){
+        for(int cidx=0; cidx<8; cidx++){
+            if(blastTemplate[ridx][cidx].find('o') == string::npos)
+                freeSlots.push_back({ridx, cidx});
+        }
+    }
+    return freeSlots;
 }
