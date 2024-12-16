@@ -13,9 +13,15 @@ int main(){
                                             {"r6c0","r6c1","r6c2","r6c3","r6c4","r6c5","r6c6","r6c7"},
                                             {"r7c0","r7c1","r7c2","r7c3","r7c4","r7c5","r7c6","r7c7"}};
 
-    vector<vector<string>> possibleBlocks = {{"r2c3", "r2c5", "r2c4", "r3c5", "r4c5"}};
+    vector<vector<string>> possibleBlocks = {{"r6c2", "r7c2", "r6c3", "r7c3"}};
     vector<vector<int>> possibleBlocksInt;
     vector<vector<string>> blastTemplateCopy;
+    int possibleBlocksSize = 0;
+    for(auto vector : possibleBlocks){
+        possibleBlocksSize += vector.size();
+    }
+    cout << possibleBlocksSize << "xz" << endl; 
+
     while(true){
         string inpt;
         std::cout << "Specify occupied slots >> ";
@@ -34,6 +40,13 @@ int main(){
             ridx++;
         }
     }
+
+    int idx = 0;
+    int dridx = 0;
+    int dcidx = 0;
+    vector<int> previousVector = {-1, -1};
+    vector<vector<int>> rslt;
+
     for(const auto &block : possibleBlocks){
         for(const auto &val : block){
             int valRowNum = val[1] - '0'; // get number value of block table row
@@ -42,69 +55,97 @@ int main(){
         }
     }
 
-    vector<int> previousVector = {-1, -1};
-    size_t dridx = 0;
-    size_t dcidx = 0;
-    size_t idx = 0;
+    for(const auto &blockVector : possibleBlocksInt){
+        if(idx != 0){
+            // all the possible positions
+            if((blockVector[0] > previousVector[0] ) && (blockVector[1] > previousVector[1])){
+                dridx = dridx+(blockVector[0]-previousVector[0]);
+                dcidx = dcidx+(blockVector[1]-previousVector[1]);
+            }
+            else if((blockVector[0] < previousVector[0] ) && (blockVector[1] > previousVector[1])){
+                dridx = dridx-(previousVector[0]-blockVector[0]);
+                dcidx = dcidx+(blockVector[1]-previousVector[1]);
+            }
+            else if((blockVector[0] < previousVector[0] ) && (blockVector[1] < previousVector[1])){
+                dridx = dridx-(previousVector[0]-blockVector[0]);
+                dcidx = dcidx-(previousVector[1]-blockVector[1]);
+            }
+            else if((blockVector[0] > previousVector[0] ) && (blockVector[1] < previousVector[1])){
+                dridx = dridx+(blockVector[0]-previousVector[0]);
+                dcidx = dcidx-(previousVector[1]-blockVector[1]);
+            }
+            else if((blockVector[0] == previousVector[0] ) && (blockVector[1] > previousVector[1])){
+                dridx = dridx;
+                dcidx = dcidx+(blockVector[1]-previousVector[1]);
+            }
+            else if((blockVector[0] == previousVector[0] ) && (blockVector[1] < previousVector[1])){
+                dridx = dridx;
+                dcidx = dcidx-(previousVector[1]-blockVector[1]);
+            }
+            else if((blockVector[0] > previousVector[0] ) && (blockVector[1] == previousVector[1])){
+                dridx = dridx+(blockVector[0]-previousVector[0]);
+                dcidx = dcidx;
+            }
+            else if((blockVector[0] < previousVector[0] ) && (blockVector[1] == previousVector[1])){
+                dridx = dridx-(previousVector[0]-blockVector[0]);
+                dcidx = dcidx;
+            }
+            rslt.push_back({dridx, dcidx});
+        }
+        if(idx == 0){
+            rslt.push_back({dridx, dcidx});
+        }
+        previousVector.assign(blockVector.begin(), blockVector.end());
+        idx++;
+    }
+    // for(auto v : rslt)
+    //     cout << v[0] << " - " << v[1] << endl;
+
     for(size_t ridx=0;ridx<8;ridx++){
         for(size_t cidx=0;cidx<8;cidx++){
-            const auto &val = blastTemplate[ridx][cidx];
-            if(val.find('o') != std::string::npos || val.find('p') != std::string::npos){
-                continue;
-            }
-            if(blastTemplateCopy.empty())
-                blastTemplateCopy.assign(blastTemplate.begin(), blastTemplate.end());            
+            // const auto &val = blastTemplate[ridx][cidx];
+            // if(val.find('o') != std::string::npos || val.find('p') != std::string::npos){
+            //     continue;
+            // }
+            blastTemplateCopy.assign(blastTemplate.begin(), blastTemplate.end());
 
-            for(const auto &blockVector : possibleBlocksInt){
-                if(idx != 0){
-                    // all the possible positions
-                    if((blockVector[0] > previousVector[0] ) && (blockVector[1] > previousVector[1])){
-                        dridx = ridx+(blockVector[0]-previousVector[0]);
-                        dcidx = cidx+(blockVector[1]-previousVector[1]);
-                    }
-                    else if((blockVector[0] < previousVector[0] ) && (blockVector[1] > previousVector[1])){
-                        dridx = ridx-(previousVector[0]-blockVector[0]);
-                        dcidx = cidx+(blockVector[1]-previousVector[1]);
-                    }
-                    else if((blockVector[0] < previousVector[0] ) && (blockVector[1] < previousVector[1])){
-                        dridx = ridx-(previousVector[0]-blockVector[0]);
-                        dcidx = cidx-(previousVector[1]-blockVector[1]);
-                    }
-                    else if((blockVector[0] > previousVector[0] ) && (blockVector[1] < previousVector[1])){
-                        dridx = ridx+(blockVector[0]-previousVector[0]);
-                        dcidx = cidx-(previousVector[1]-blockVector[1]);
-                    }
-                    else if((blockVector[0] == previousVector[0] ) && (blockVector[1] > previousVector[1])){
-                        dridx = ridx;
-                        dcidx = cidx+(blockVector[1]-previousVector[1]);
-                    }
-                    else if((blockVector[0] == previousVector[0] ) && (blockVector[1] < previousVector[1])){
-                        dridx = ridx;
-                        dcidx = cidx-(previousVector[1]-blockVector[1]);
-                    }
-                    else if((blockVector[0] > previousVector[0] ) && (blockVector[1] == previousVector[1])){
-                        dridx = ridx+(blockVector[0]-previousVector[0]);
-                        dcidx = cidx;
-                    }
-                    else if((blockVector[0] < previousVector[0] ) && (blockVector[1] == previousVector[1])){
-                        dridx = ridx-(previousVector[0]-blockVector[0]);
-                        dcidx = cidx;
-                    }
+            // appending
+            bool err = false;
+            if(rslt.size() == 0){
+                for(auto row : blastTemplate){
+                    for(auto val : row)
+                        cout << val << ' ';
+                    cout << '\n';
                 }
-                // appending
-                if (dridx < blastTemplate.size() && dcidx < blastTemplate[dridx].size()){
-                    if((blastTemplate[dridx][dcidx].find('p') == std::string::npos) && (blastTemplate[dridx][dcidx].find('o') == std::string::npos)){
-                        blastTemplate[dridx][dcidx] += 'p';
-                        possibleBlocksInt.erase(possibleBlocksInt.begin());
-                        break;                        
-                    }
-
-                }
-            previousVector = blockVector;    
+                exit(0);
             }
-            idx++;
+            for(auto &v : rslt){
+                if((ridx+v[0] < blastTemplateCopy.size()) && (cidx+v[1] < blastTemplateCopy[ridx+v[0]].size())){
+                    // cout << ridx+v[0] << " - " << cidx+v[1] << endl;
+                    if((blastTemplateCopy[ridx+v[0]][cidx+v[1]].find('p') == string::npos) && (blastTemplateCopy[ridx+v[0]][cidx+v[1]].find('o') == string::npos)){
+                        blastTemplateCopy[ridx+v[0]][cidx+v[1]] += 'p';
+                        int pcount = 0;
+                        for(auto row : blastTemplate){
+                            for(auto val : row){
+                                if(val.find('p') != string::npos)
+                                    pcount++;                                
+                            }
+                        }
+                        if(pcount >= possibleBlocksSize)
+                            goto printvals;
+                    }
+                } else{
+                    err = true;
+                    break;
+                }
+            }
+            if(!err){
+                blastTemplate = blastTemplateCopy;
+                rslt.erase(rslt.begin());
+                break;
+            }
         }
-    }        
+    }
 
     // for(auto vector : possibleBlocksInt){
     //     for(auto val : vector)
@@ -112,13 +153,14 @@ int main(){
     //     cout << endl;
     // }
 
-    for(auto row : blastTemplate){
-        for(auto val : row)
-            cout << val << ' ';
-        cout << '\n';
-    }
+    printvals:
+        for(auto row : blastTemplate){
+            for(auto val : row)
+                cout << val << ' ';
+            cout << '\n';
+        }
     
-    cout << "HELLOZX";
+    cout << "=!";
 
     return 0;
 }
