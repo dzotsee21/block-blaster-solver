@@ -79,7 +79,7 @@ int main(){
     }
 
     vector<vector<int>> freeSlots = blastFreeSlots(blastTemplate);
-    for(auto &slotVector : freeSlots){
+    for(auto &slotVector : freeSlots){ // the problem is that freeSlots is being iterated once. we want for the block vector (blockVal) to be the main thing and freSlots has to iterate wrt blockvals and update the table accordingly
         blastTemplateCopy.assign(blastTemplate.begin(), blastTemplate.end());
         bool err = false;
         for(auto &blockVal : rslt){
