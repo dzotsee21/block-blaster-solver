@@ -18,7 +18,7 @@ int main(){
                                             {"r6c0","r6c1","r6c2","r6c3","r6c4","r6c5","r6c6","r6c7"},
                                             {"r7c0","r7c1","r7c2","r7c3","r7c4","r7c5","r7c6","r7c7"}};
 
-    vector<vector<string>> possibleBlocks = {{"r7c3", "r7c4"}, {"r6c4", "r7c4", "r7c3", "r7c5"}};
+    vector<vector<string>> possibleBlocks = {{"r7c3", "r7c4"}, {"r6c4", "r6c5", "r7c4", "r7c5"}};
     vector<vector<vector<int>>> possibleBlocksInt = vstr_to_vint(possibleBlocks);
     vector<vector<string>> blastTemplateCopy;
     int possibleBlocksSize = 0;
@@ -48,13 +48,46 @@ int main(){
 
     vector<vector<vector<int>>>rslt = distance_vector(possibleBlocksInt);
     
-    // come up with an algorithm that works no matter the shape and quantity of blocks
-
-    for(auto row : blastTemplate){
-        for(auto val : row)
-            cout << val << ' ';
-        cout << '\n';
+    // make it so that block values are aligned correctly and iteratively through the table.
+    vector<vector<int>> freeSlots = blastFreeSlots(blastTemplate);
+    for(auto &block : rslt){
+        int i = 0;
+        blastTemplateCopy.assign(blastTemplate.begin(), blastTemplate.end());
+        vector<vector<int>> freeSlots = blastFreeSlots(blastTemplate);
+        for(auto &bvec : block){
+            // cout << bvec[0] << "-" << bvec[1] << endl;
+            for(int r=0; r<8; r++){
+                for(int c=0; c<8; c++){
+                    if(0 <= r+bvec[0] <= 7 && 0 <= c+bvec[1] <= 7){
+                        vector<int> target = {r+bvec[0], c+bvec[1]};
+                        if(find(freeSlots.begin(), freeSlots.end(), target) != freeSlots.end()){
+                            if((i++)>=block.size()){
+                                goto out;
+                            }
+                            cout << r << endl;
+                            // cout << r+bvec[0] << "-" << c+bvec[1] << endl;
+                            blastTemplateCopy[r+bvec[0]][c+bvec[1]] += 'o';
+                            freeSlots = blastFreeSlots(blastTemplateCopy);                
+                        }
+                    }
+                }
+            }           
+        }
+        out:
+        blastTemplate.assign(blastTemplateCopy.begin(), blastTemplateCopy.end());
+        for(auto &row : blastTemplate){
+            for(auto &val : row)
+                cout << val << ' ';
+            cout << '\n';
+        }
+        cout << "-----" << endl;
     }
+
+    // for(auto &row : blastTemplate){
+    //     for(auto &val : row)
+    //         cout << val << ' ';
+    //     cout << '\n';
+    // }
 
     return 0;
 }
