@@ -47,6 +47,8 @@ int main(){
     }
 
     vector<vector<vector<int>>>rslt = distance_vector(possibleBlocksInt);
+    
+    // come up with an algorithm that works no matter the shape and quantity of blocks
 
     for(auto row : blastTemplate){
         for(auto val : row)
