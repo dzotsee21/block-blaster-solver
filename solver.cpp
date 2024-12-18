@@ -9,18 +9,19 @@ vector<vector<vector<int>>> vstr_to_vint(vector<vector<string>> possibleBlocks);
 vector<vector<vector<int>>> distance_vector(vector<vector<vector<int>>> possibleBlocksInt);
 
 int main(){
-    vector<vector<string>> blastTemplate = {{"r0c0","r0c1","r0c2","r0c3","r0c4","r0c5","r0c6","r0c7"},
-                                            {"r1c0","r1c1","r1c2","r1c3","r1c4","r1c5","r1c6","r1c7"},
-                                            {"r2c0","r2c1","r2c2","r2c3","r2c4","r2c5","r2c6","r2c7"},
-                                            {"r3c0","r3c1","r3c2","r3c3","r3c4","r3c5","r3c6","r3c7"},
-                                            {"r4c0","r4c1","r4c2","r4c3","r4c4","r4c5","r4c6","r4c7"},
+    vector<vector<string>> blastTemplate = {{"r0c0o","r0c1","r0c2","r0c3","r0c4","r0c5","r0c6","r0c7"},
+                                            {"r1c0o","r1c1","r1c2","r1c3","r1c4","r1c5","r1c6","r1c7"},
+                                            {"r2c0o","r2c1","r2c2","r2c3","r2c4","r2c5","r2c6","r2c7"},
+                                            {"r3c0o","r3c1","r3c2","r3c3","r3c4","r3c5","r3c6","r3c7"},
+                                            {"r4c0o","r4c1","r4c2","r4c3","r4c4","r4c5","r4c6","r4c7"},
                                             {"r5c0","r5c1","r5c2","r5c3","r5c4","r5c5","r5c6","r5c7"},
-                                            {"r6c0","r6c1","r6c2","r6c3","r6c4","r6c5","r6c6","r6c7"},
-                                            {"r7c0","r7c1","r7c2","r7c3","r7c4","r7c5","r7c6","r7c7"}};
+                                            {"r6c0o","r6c1","r6c2o","r6c3o","r6c4o","r6c5o","r6c6o","r6c7o"},
+                                            {"r7c0o","r7c1","r7c2o","r7c3o","r7c4o","r7c5o","r7c6o","r7c7o"}};
 
-    vector<vector<string>> possibleBlocks = {{"r7c3", "r7c4"}, {"r6c4", "r6c5", "r7c4", "r7c5"}};
+    vector<vector<string>> possibleBlocks = {{"r7c1", "r6c1", "r5c1", "r5c0"}};
     vector<vector<vector<int>>> possibleBlocksInt = vstr_to_vint(possibleBlocks);
     vector<vector<string>> blastTemplateCopy;
+    vector<vector<string>> bestTemplate;
     int possibleBlocksSize = 0;
     for(auto vector : possibleBlocks){
         possibleBlocksSize += vector.size();
@@ -48,46 +49,58 @@ int main(){
 
     vector<vector<vector<int>>>rslt = distance_vector(possibleBlocksInt);
     
-    // make it so that block values are aligned correctly and iteratively through the table.
-    vector<vector<int>> freeSlots = blastFreeSlots(blastTemplate);
+    // fix the problem with when the blocks are not first, the unoccupied edges don't get occupied by blocks
+    int prevBestPoint = 0;
     for(auto &block : rslt){
-        int i = 0;
-        blastTemplateCopy.assign(blastTemplate.begin(), blastTemplate.end());
         vector<vector<int>> freeSlots = blastFreeSlots(blastTemplate);
-        for(auto &bvec : block){
-            // cout << bvec[0] << "-" << bvec[1] << endl;
-            for(int r=0; r<8; r++){
-                for(int c=0; c<8; c++){
-                    if(0 <= r+bvec[0] <= 7 && 0 <= c+bvec[1] <= 7){
-                        vector<int> target = {r+bvec[0], c+bvec[1]};
-                        if(find(freeSlots.begin(), freeSlots.end(), target) != freeSlots.end()){
-                            if((i++)>=block.size()){
-                                goto out;
-                            }
-                            cout << r << endl;
-                            // cout << r+bvec[0] << "-" << c+bvec[1] << endl;
-                            blastTemplateCopy[r+bvec[0]][c+bvec[1]] += 'o';
-                            freeSlots = blastFreeSlots(blastTemplateCopy);                
+        for(auto &freeVec : freeSlots){
+            blastTemplateCopy.assign(blastTemplate.begin(), blastTemplate.end());
+            bool err = false;
+            int point = 0;            
+            for(auto &bvec : block){
+                if((freeVec[0]+bvec[0] >= 0 && freeVec[0]+bvec[0] < 8) && (freeVec[1]+bvec[1] >= 0 && freeVec[1]+bvec[1] < 8)){
+                    if(blastTemplateCopy[freeVec[0]+bvec[0]][freeVec[1]+bvec[1]].find('o') == string::npos)
+                        blastTemplateCopy[freeVec[0]+bvec[0]][freeVec[1]+bvec[1]] += 'o';
+                    else
+                        err = true;
+                } else
+                    err = true;
+            }
+            if(!err){
+                for(int r=0; r<8;r++){
+                    bool allContainO = true;
+                    for(int c=0; c<8;c++)
+                        if(blastTemplateCopy[r][c].find('o') == string::npos){
+                            allContainO = false;
+                            break;
                         }
+                    if(allContainO){
+                        point++;
                     }
                 }
-            }           
+                for(int c=0; c<8;c++){
+                    bool allContainO = true;
+                    for(int r=0; r<8;r++)
+                        if(blastTemplateCopy[r][c].find('o') == string::npos){
+                            allContainO = false;
+                            break;
+                        }
+                    if(allContainO)
+                        point++;
+                }
+                if(point>prevBestPoint){
+                    prevBestPoint = point;
+                        bestTemplate.assign(blastTemplateCopy.begin(), blastTemplateCopy.end());
+                }
+            }
         }
-        out:
-        blastTemplate.assign(blastTemplateCopy.begin(), blastTemplateCopy.end());
-        for(auto &row : blastTemplate){
-            for(auto &val : row)
-                cout << val << ' ';
-            cout << '\n';
-        }
-        cout << "-----" << endl;
     }
 
-    // for(auto &row : blastTemplate){
-    //     for(auto &val : row)
-    //         cout << val << ' ';
-    //     cout << '\n';
-    // }
+    for(auto &row : bestTemplate){
+        for(auto &val : row)
+            cout << val << ' ';
+        cout << '\n';
+    }
 
     return 0;
 }
