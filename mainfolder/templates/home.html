@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+{% block content %}
+<style>
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(8, 40px);
+        gap: 5px;
+    }
+    .block {
+        border-style: none;
+        width: 40px;
+        height: 40px;
+        cursor: pointer;
+    }
+    .green {
+        background-color: rgb(29, 179, 29);
+    }
+    .red {
+        background-color: rgb(238, 50, 50);
+    }
+</style>
+
+    <h1>Block Blast Solver</h1>
+
+    <div class="grid">
+        {% for row in grid %}
+            {% set row_val = loop.index0 %}
+            {% for block in row %}
+                <form action="/toggle" method="POST" style="display: inline;">
+                    <input type="hidden" name="x" value="{{ loop.index0 }}">
+                    <input type="hidden" name="y" value="{{ row_val }}">
+                    <button type="submit" class="block {% if block == 0 %}green{% else %}red{% endif %}"></button>
+                </form>
+            {% endfor %}
+        {% endfor %}
+    </div>
+{% endblock content %}
