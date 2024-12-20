@@ -3,6 +3,8 @@ from mainfolder import app
 from mainfolder.constants import grid, figure1, figure2, figure3, figure_labels, grid_lst, figures_indexes_lst, blast_template
 
 
+# make it so that when pressing "SOLVE" button cpp algorithm runs and nice, detailed step-by-step grid gets outputed.
+
 @app.route('/')
 def home():
     return render_template('home.html', title="Home", grid=grid, figure1=figure1, figure2=figure2, figure3=figure3)

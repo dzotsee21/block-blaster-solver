@@ -10,6 +10,11 @@ vector<vector<vector<int>>> distance_vector(vector<vector<vector<int>>> possible
 vector<vector<string>> assignVal(vector<vector<int>> block, vector<int> freeVec,
                                  vector<vector<string>> &blastTemplateCopy, bool &err,
                                  vector<vector<string>> &bestTemplate, int &prevBestPoint);
+vector<vector<string>> mainAlgorithm(vector<vector<string>> blastTemplate, vector<vector<string>> possibleBlocks, vector<vector<vector<int>>> possibleBlocksInt,
+                    vector<vector<vector<int>>> possibleBlocksIntCopy, vector<vector<vector<int>>> possibleBlocksIntCopy2,
+                    vector<vector<string>> blastTemplateCopy,vector<vector<string>> blastTemplateCopy2,
+                    vector<vector<string>> blastTemplateCopy3, vector<vector<string>> bestTemplate,
+                    int prevBestPoint);
 
 int main(){
     vector<vector<string>> blastTemplate = {{"r0c0","r0c1","r0c2","r0c3","r0c4","r0c5","r0c6","r0c7"},
@@ -56,6 +61,23 @@ int main(){
         }
     }
 
+    bestTemplate = mainAlgorithm(blastTemplate, possibleBlocks, possibleBlocksInt, possibleBlocksIntCopy, possibleBlocksIntCopy2,
+                    blastTemplateCopy, blastTemplateCopy2, blastTemplateCopy3, bestTemplate, prevBestPoint);
+
+    for(auto &row : bestTemplate){
+        for(auto &val : row)
+            cout << val << ' ';
+        cout << '\n';
+    }
+    return 0;
+}
+
+// Functions
+vector<vector<string>> mainAlgorithm(vector<vector<string>> blastTemplate, vector<vector<string>> possibleBlocks, vector<vector<vector<int>>> possibleBlocksInt,
+                    vector<vector<vector<int>>> possibleBlocksIntCopy, vector<vector<vector<int>>> possibleBlocksIntCopy2,
+                    vector<vector<string>> blastTemplateCopy,vector<vector<string>> blastTemplateCopy2,
+                    vector<vector<string>> blastTemplateCopy3, vector<vector<string>> bestTemplate,
+                    int prevBestPoint){
     for(auto &blocks : possibleBlocksInt){
         vector<vector<vector<int>>> rslt = distance_vector({blocks});
         for(auto &block : rslt){
@@ -170,20 +192,7 @@ int main(){
             }
         }
     }
-
-    for(auto &row : bestTemplate){
-        for(auto &val : row)
-            cout << val << ' ';
-        cout << '\n';
-    }
-
-    return 0;
-}
-
-// Functions
-
-void mainAlgorithm(){
-
+    return bestTemplate;
 }
 
 
