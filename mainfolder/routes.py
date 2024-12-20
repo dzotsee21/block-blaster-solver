@@ -1,19 +1,7 @@
 from flask import render_template, url_for, flash, redirect, request
 from mainfolder import app
+from mainfolder.constants import grid, figure1, figure2, figure3, figure_labels, grid_lst, figures_indexes_lst, blast_template
 
-GRID_SIZE = 8
-FIGURES_SIZE = 8
-grid = [[0 for _ in range(GRID_SIZE)] for _ in range(GRID_SIZE)]
-figure1 = [[0 for _ in range(FIGURES_SIZE)] for _ in range(FIGURES_SIZE)]
-figure2 = [[0 for _ in range(FIGURES_SIZE)] for _ in range(FIGURES_SIZE)]
-figure3 = [[0 for _ in range(FIGURES_SIZE)] for _ in range(FIGURES_SIZE)]
-
-figure_labels = [['fx0', 'fy0'], ['fx1', 'fy1'], ['fx2', 'fy2']]
-grid_lst = []
-figures_indexes_lst = [[],[],[]]
-
-# make it so that updated border template gets send to the cpp algorithm and an algorithm does it job and correct templates get sends to the web
-# step by step.
 
 @app.route('/')
 def home():
@@ -55,5 +43,17 @@ def toggle():
             break
         except:
             continue
+
+    return redirect(url_for('home'))
+
+@app.route('/solve', methods=['POST'])
+def solve():
+    for block in grid_lst:
+        for r_idx, row in enumerate(blast_template):
+            for c_idx, col in enumerate(row):
+                if block == col:
+                    blast_template[r_idx][c_idx] += 'o'
+
+    print(blast_template)
 
     return redirect(url_for('home'))
