@@ -1,15 +1,32 @@
 {% extends "layout.html" %}
 {% block content %}
 <style>
+    .container {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 20px;
+    }
     .grid {
         display: grid;
         grid-template-columns: repeat(8, 40px);
         gap: 5px;
     }
+    .figuregrid {
+        display: grid;
+        grid-template-columns: repeat(8, 30px);
+        gap: 1px;
+    }
     .block {
         border-style: none;
         width: 40px;
         height: 40px;
+        cursor: pointer;
+    }
+    .figureblocks {
+        border-style: none;
+        width: 25px;
+        height: 25px;
         cursor: pointer;
     }
     .green {
@@ -20,18 +37,56 @@
     }
 </style>
 
-    <h1>Block Blast Solver</h1>
+<h1>Block Blast Solver</h1>
 
+<div class="container">
     <div class="grid">
         {% for row in grid %}
             {% set row_val = loop.index0 %}
             {% for block in row %}
                 <form action="/toggle" method="POST" style="display: inline;">
-                    <input type="hidden" name="x" value="{{ loop.index0 }}">
-                    <input type="hidden" name="y" value="{{ row_val }}">
+                    <input type="hidden" name="gx" value="{{ loop.index0 }}">
+                    <input type="hidden" name="gy" value="{{ row_val }}">
                     <button type="submit" class="block {% if block == 0 %}green{% else %}red{% endif %}"></button>
                 </form>
             {% endfor %}
         {% endfor %}
     </div>
+    <div class="figuregrid">
+        {% for row in figure1 %}
+            {% set row_val = loop.index0 %}
+            {% for block in row %}
+                <form action="/toggle" method="POST" style="display: inline;">
+                    <input type="hidden" name="fx0" value="{{ loop.index0 }}">
+                    <input type="hidden" name="fy0" value="{{ row_val }}">
+                    <button type="submit" class="figureblocks {% if block == 0 %}green{% else %}red{% endif %}"></button>
+                </form>
+            {% endfor %}
+        {% endfor %}
+    </div>
+    <div class="figuregrid">
+        {% for row in figure2 %}
+            {% set row_val = loop.index0 %}
+            {% for block in row %}
+                <form action="/toggle" method="POST" style="display: inline;">
+                    <input type="hidden" name="fx1" value="{{ loop.index0 }}">
+                    <input type="hidden" name="fy1" value="{{ row_val }}">
+                    <button type="submit" class="figureblocks {% if block == 0 %}green{% else %}red{% endif %}"></button>
+                </form>
+            {% endfor %}
+        {% endfor %}
+    </div>
+    <div class="figuregrid">
+        {% for row in figure3 %}
+            {% set row_val = loop.index0 %}
+            {% for block in row %}
+                <form action="/toggle" method="POST" style="display: inline;">
+                    <input type="hidden" name="fx2" value="{{ loop.index0 }}">
+                    <input type="hidden" name="fy2" value="{{ row_val }}">
+                    <button type="submit" class="figureblocks {% if block == 0 %}green{% else %}red{% endif %}"></button>
+                </form>
+            {% endfor %}
+        {% endfor %}
+    </div>
+</div>
 {% endblock content %}
