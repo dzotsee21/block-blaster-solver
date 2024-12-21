@@ -1,11 +1,18 @@
 #include <iostream>
-#include <bits/stdc++.h>
+#include <string>
+#include <algorithm>
+#include <map>
+#include <set>
+#include <queue>
+#include <cmath>
+// #include <pybind11/pybind11.h>
+// #include <pybind11/stl.h>
 #include <vector>
 using namespace std;
 
 
 vector<vector<int>> blastFreeSlots(vector<vector<string>> blastTemplate);
-vector<vector<vector<int>>> vstr_to_vint(vector<vector<string>> possibleBlocks);
+vector<vector<vector<int>>> vstrToVint(vector<vector<string>> possibleBlocks);
 vector<vector<vector<int>>> distance_vector(vector<vector<vector<int>>> possibleBlocksInt);
 vector<vector<string>> assignVal(vector<vector<int>> block, vector<int> freeVec,
                                  vector<vector<string>> &blastTemplateCopy, bool &err,
@@ -23,11 +30,11 @@ int main(){
                                             {"r3c0","r3c1","r3c2","r3c3","r3c4","r3c5","r3c6","r3c7"},
                                             {"r4c0","r4c1","r4c2","r4c3","r4c4","r4c5","r4c6","r4c7"},
                                             {"r5c0","r5c1","r5c2","r5c3","r5c4","r5c5","r5c6","r5c7"},
-                                            {"r6c0","r6c1","r6c2o","r6c3o","r6c4o","r6c5o","r6c6o","r6c7o"},
-                                            {"r7c0","r7c1","r7c2o","r7c3o","r7c4o","r7c5o","r7c6o","r7c7o"}};
+                                            {"r6c0","r6c1","r6c2","r6c3","r6c4","r6c5","r6c6","r6c7"},
+                                            {"r7c0","r7c1","r7c2","r7c3","r7c4","r7c5o","r7c6","r7c7"}};
 
-    vector<vector<string>> possibleBlocks = {{"r6c0", "r7c0", "r5c0"}, {"r6c1", "r7c1"}};
-    vector<vector<vector<int>>> possibleBlocksInt = vstr_to_vint(possibleBlocks);
+    vector<vector<string>> possibleBlocks = {{"r6c5", "r5c5"}, {"r4c5", "r3c5", "r2c5"}, {"r1c5", "r0c5"}};
+    vector<vector<vector<int>>> possibleBlocksInt = vstrToVint(possibleBlocks);
     vector<vector<vector<int>>> possibleBlocksIntCopy;
     vector<vector<vector<int>>> possibleBlocksIntCopy2;
     vector<vector<string>> blastTemplateCopy;
@@ -35,40 +42,34 @@ int main(){
     vector<vector<string>> blastTemplateCopy3;
     vector<vector<string>> bestTemplate;
     int prevBestPoint = 0;
-    int possibleBlocksSize = 0;
 
-    for(auto vector : possibleBlocks){
-        possibleBlocksSize += vector.size();
-    }
-    cout << possibleBlocksSize << endl; 
-
-    while(true){
-        string inpt;
-        std::cout << "Specify occupied slots >> ";
-        std::cin >> inpt;
-        size_t ridx = 0;
-        if(inpt == "exit")
-            break;
-        for(auto &row : blastTemplate){
-            size_t cidx = 0;
-            for(auto &col : row){
-                if(col == inpt){
-                    blastTemplate[ridx][cidx] += 'o';
-                }
-                cidx++;
-            }
-            ridx++;
-        }
-    }
+    // while(true){
+    //     string inpt;
+    //     std::cout << "Specify occupied slots >> ";
+    //     std::cin >> inpt;
+    //     size_t ridx = 0;
+    //     if(inpt == "exit")
+    //         break;
+    //     for(auto &row : blastTemplate){
+    //         size_t cidx = 0;
+    //         for(auto &col : row){
+    //             if(col == inpt){
+    //                 blastTemplate[ridx][cidx] += 'o';
+    //             }
+    //             cidx++;
+    //         }
+    //         ridx++;
+    //     }
+    // }
 
     bestTemplate = mainAlgorithm(blastTemplate, possibleBlocks, possibleBlocksInt, possibleBlocksIntCopy, possibleBlocksIntCopy2,
                     blastTemplateCopy, blastTemplateCopy2, blastTemplateCopy3, bestTemplate, prevBestPoint);
 
-    for(auto &row : bestTemplate){
-        for(auto &val : row)
-            cout << val << ' ';
-        cout << '\n';
-    }
+    // for(auto &row : bestTemplate){
+    //     for(auto &val : row)
+    //         cout << val << ' ';
+    //     cout << '\n';
+    // }
     return 0;
 }
 
@@ -207,7 +208,7 @@ vector<vector<int>> blastFreeSlots(vector<vector<string>> blastTemplate){
     return freeSlots;
 }
 
-vector<vector<vector<int>>> vstr_to_vint(vector<vector<string>> possibleBlocks){
+vector<vector<vector<int>>> vstrToVint(vector<vector<string>> possibleBlocks){
     vector<vector<vector<int>>> possibleBlocksInt;
     for(const auto &block : possibleBlocks){
         vector<vector<int>> blockVals;
@@ -292,3 +293,11 @@ vector<vector<string>> assignVal(vector<vector<int>> block, vector<int> freeVec,
     }
     return bestTemplate;
 }
+
+// PYBIND11_MODULE(solver, m){
+//     m.def("mainAlgorithm", &mainAlgorithm, "block blast solver");
+// }
+
+// PYBIND11_MODULE(vstr_to_vint, m){
+//     m.def("vstrToVint", &vstrToVint, "turn vector of strings into vector of ints");
+// }
