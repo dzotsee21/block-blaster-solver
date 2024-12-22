@@ -1,6 +1,8 @@
 GRID_SIZE = 8
 FIGURES_SIZE = 8
 grid = [[0 for _ in range(GRID_SIZE)] for _ in range(GRID_SIZE)]
+grid_const = [[0 for _ in range(GRID_SIZE)] for _ in range(GRID_SIZE)]
+figure_const = [[0 for _ in range(FIGURES_SIZE)] for _ in range(FIGURES_SIZE)]
 figure1 = [[0 for _ in range(FIGURES_SIZE)] for _ in range(FIGURES_SIZE)]
 figure2 = [[0 for _ in range(FIGURES_SIZE)] for _ in range(FIGURES_SIZE)]
 figure3 = [[0 for _ in range(FIGURES_SIZE)] for _ in range(FIGURES_SIZE)]
@@ -8,6 +10,7 @@ figure3 = [[0 for _ in range(FIGURES_SIZE)] for _ in range(FIGURES_SIZE)]
 figure_labels = [['fx0', 'fy0'], ['fx1', 'fy1'], ['fx2', 'fy2']]
 grid_lst = []
 figures_indexes_lst = [[], [], []]
+figures_indexes_lst_const = [[], [], []]
 figures_indexes_lst_int = [[[]],[[]],[[]]]
 figures_indexes_lst_int_copy = [[[]],[[]],[[]]]
 figures_indexes_lst_int_copy2 = [[[]],[[]],[[]]]

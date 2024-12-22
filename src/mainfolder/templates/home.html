@@ -35,6 +35,9 @@
     .red {
         background-color: rgb(238, 50, 50);
     }
+    .yellow {
+        background-color: rgb(237, 230, 95);
+    }
 </style>
 
 <h1>Block Blast Solver</h1>
@@ -92,5 +95,14 @@
     <form action="/solve" method="POST">
         <button type="submit" name="solve">Solve</button>
     </form>
+    <br>
+    <br>
+    <div class="figuregrid">
+        {% for row in best_template %}
+            {% for block in row %}
+                <button class="figureblocks {% if block == 0 %}green {% elif block == 2 %}yellow {% else %}red {% endif %}"></button>
+            {% endfor %}
+        {% endfor %}
+    </div>
 </div>
 {% endblock content %}
