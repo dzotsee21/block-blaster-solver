@@ -3,7 +3,7 @@ from src.mainfolder import app
 from src.mainfolder.constants import (grid, figure1, figure2, figure3, figure_labels, grid_lst, figures_indexes_lst, blast_template,
                                       figures_indexes_lst_int, figures_indexes_lst_int_copy, figures_indexes_lst_int_copy2,
                                       blast_template_copy, blast_template_copy2, blast_template_copy3, best_template, prev_best_point,
-                                      figure_const, figures_indexes_lst_const, grid_const, output_grid, blast_template_const, FIGURES_SIZE, GRID_SIZE)
+                                      figure_const, figures_indexes_lst_const, grid_const, output_grid, blast_template_const, best_templates, FIGURES_SIZE, GRID_SIZE)
 import src.mainfolder.solver as solver
 import src.mainfolder.vstr_to_vint as vstr_to_vint
 
@@ -12,7 +12,7 @@ clear_needed = False
 @app.route('/')
 def home():
     global clear_needed
-    return render_template('home.html', title="Home", grid=grid, figure1=figure1, figure2=figure2, figure3=figure3, best_template=output_grid, clear_needed=clear_needed)
+    return render_template('home.html', title="Home", grid=grid, figure1=figure1, figure2=figure2, figure3=figure3, best_templates=output_grid, clear_needed=clear_needed)
 
 
 @app.route('/toggle', methods=['POST'])
@@ -72,18 +72,21 @@ def solve():
     outputs = solver.mainAlgorithm(blast_template, figures_indexes_lst, figures_indexes_lst_int,
                                figures_indexes_lst_int_copy, figures_indexes_lst_int_copy2,
                                blast_template_copy, blast_template_copy2, 
-                               blast_template_copy3, best_template,
+                               blast_template_copy3, best_template, best_templates,
                                prev_best_point)
-    
-    for oidx, output in enumerate(outputs):
-        for ridx, row in enumerate(output):
-            for cidx, col in enumerate(row):
-                if "op" in col:
-                    output_grid[oidx][ridx][cidx] = 2
-                elif "o" in col:
-                    output_grid[oidx][ridx][cidx] = 1
-                else:
-                    output_grid[oidx][ridx][cidx] = 0
+    print(outputs)
+    # for output in outputs:
+    #     grid = [[0 for _ in range(FIGURES_SIZE)] for _ in range(FIGURES_SIZE)]
+    #     for ridx, row in enumerate(output):
+    #         for cidx, col in enumerate(row):
+    #             if "op" in col:
+    #                 grid[ridx][cidx] = 2
+    #             elif "o" in col:
+    #                 grid[ridx][cidx] = 1
+    #             else:
+    #                 grid[ridx][cidx] = 0
+
+    #     output_grid.append(grid)
 
 
     return redirect(url_for('home'))
@@ -111,7 +114,7 @@ def clear():
     blast_template_copy2 = [[]]
     blast_template_copy3 = [[]]
     best_template = [[]]
-    output_grid = [[0 for _ in range(FIGURES_SIZE)] for _ in range(FIGURES_SIZE)]
+    output_grid = []
     prev_best_point = 0
 
     blast_template = [

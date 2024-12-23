@@ -17,26 +17,13 @@ vector<vector<vector<int>>> distance_vector(vector<vector<vector<int>>> possible
 vector<vector<string>> assignVal(vector<vector<int>> block, vector<int> freeVec,
                                  vector<vector<string>> &blastTemplateCopy, bool &err,
                                  vector<vector<string>> &bestTemplate, int &prevBestPoint);
+void removeDuplicates(vector<vector<vector<string>>>& bestTemplates);             
 vector<vector<vector<string>>> mainAlgorithm(vector<vector<string>> blastTemplate, vector<vector<string>> possibleBlocks, vector<vector<vector<int>>> possibleBlocksInt,
                     vector<vector<vector<int>>> possibleBlocksIntCopy, vector<vector<vector<int>>> possibleBlocksIntCopy2,
                     vector<vector<string>> blastTemplateCopy,vector<vector<string>> blastTemplateCopy2,
                     vector<vector<string>> blastTemplateCopy3, vector<vector<string>> bestTemplate, vector<vector<vector<string>>> bestTemplates,
                     int prevBestPoint);
 
-
-void removeDuplicates(vector<vector<vector<string>>>& bestTemplates) {
-    for (auto& templateSet : bestTemplates) {
-        for (auto& vec : templateSet) {
-            sort(vec.begin(), vec.end());
-        }
-        sort(templateSet.begin(), templateSet.end());
-    }
-
-    sort(bestTemplates.begin(), bestTemplates.end());
-
-    auto it = unique(bestTemplates.begin(), bestTemplates.end());
-    bestTemplates.erase(it, bestTemplates.end());
-}
 
 int main(){
     vector<vector<string>> blastTemplate = {{"r0c0","r0c1","r0c2o","r0c3","r0c4","r0c5","r0c6","r0c7"},
@@ -222,6 +209,9 @@ vector<vector<vector<string>>> mainAlgorithm(vector<vector<string>> blastTemplat
             }
         }
     }
+
+    removeDuplicates(bestTemplates);
+
     return bestTemplates;
 }
 
@@ -321,6 +311,20 @@ vector<vector<string>> assignVal(vector<vector<int>> block, vector<int> freeVec,
         }
     }
     return bestTemplate;
+}
+
+void removeDuplicates(vector<vector<vector<string>>>& bestTemplates) {
+    for (auto& templateSet : bestTemplates) {
+        for (auto& vec : templateSet) {
+            sort(vec.begin(), vec.end());
+        }
+        sort(templateSet.begin(), templateSet.end());
+    }
+
+    sort(bestTemplates.begin(), bestTemplates.end());
+
+    auto it = unique(bestTemplates.begin(), bestTemplates.end());
+    bestTemplates.erase(it, bestTemplates.end());
 }
 
 // PYBIND11_MODULE(solver, m){
