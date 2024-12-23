@@ -43,33 +43,9 @@ int main(){
     vector<vector<string>> bestTemplate;
     int prevBestPoint = 0;
 
-    // while(true){
-    //     string inpt;
-    //     std::cout << "Specify occupied slots >> ";
-    //     std::cin >> inpt;
-    //     size_t ridx = 0;
-    //     if(inpt == "exit")
-    //         break;
-    //     for(auto &row : blastTemplate){
-    //         size_t cidx = 0;
-    //         for(auto &col : row){
-    //             if(col == inpt){
-    //                 blastTemplate[ridx][cidx] += 'o';
-    //             }
-    //             cidx++;
-    //         }
-    //         ridx++;
-    //     }
-    // }
-
     bestTemplate = mainAlgorithm(blastTemplate, possibleBlocks, possibleBlocksInt, possibleBlocksIntCopy, possibleBlocksIntCopy2,
                     blastTemplateCopy, blastTemplateCopy2, blastTemplateCopy3, bestTemplate, prevBestPoint);
 
-    // for(auto &row : bestTemplate){
-    //     for(auto &val : row)
-    //         cout << val << ' ';
-    //     cout << '\n';
-    // }
     return 0;
 }
 
