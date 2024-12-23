@@ -3,9 +3,9 @@ from src.mainfolder import app
 from src.mainfolder.constants import (grid, figure1, figure2, figure3, figure_labels, grid_lst, figures_indexes_lst, blast_template,
                                       figures_indexes_lst_int, figures_indexes_lst_int_copy, figures_indexes_lst_int_copy2,
                                       blast_template_copy, blast_template_copy2, blast_template_copy3, best_template, prev_best_point,
-                                      figure_const, figures_indexes_lst_const, grid_const, output_grid, blast_template_const, FIGURES_SIZE, GRID_SIZE)
-import src.mainfolder.solver as solver
-import src.mainfolder.vstr_to_vint as vstr_to_vint
+                                      output_grid, FIGURES_SIZE, GRID_SIZE)
+import src.mainfolder.cppfuncs.solver as solver
+import src.mainfolder.cppfuncs.vstr_to_vint as vstr_to_vint
 
 clear_needed = False
 
