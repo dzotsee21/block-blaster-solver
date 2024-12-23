@@ -18,6 +18,7 @@ blast_template_copy = [[]]
 blast_template_copy2 = [[]]
 blast_template_copy3 = [[]]
 best_template = [[]]
+output_grid = [[[0 for _ in range(FIGURES_SIZE)] for _ in range(FIGURES_SIZE)]]
 prev_best_point = 0
 
 blast_template = [

@@ -105,4 +105,11 @@
         {% endfor %}
     </div>
 </div>
+<br>
+{% if clear_needed %}
+    <h1 style="color: rgb(224, 52, 52)">YOU SHOULD CLICK CLEAR BEFORE PROCEEDING</h1>
+{% endif %}
+<form action="/clear" method="POST">
+    <button type="submit" name="solve">Clear</button>
+</form>
 {% endblock content %}

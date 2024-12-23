@@ -17,23 +17,38 @@ vector<vector<vector<int>>> distance_vector(vector<vector<vector<int>>> possible
 vector<vector<string>> assignVal(vector<vector<int>> block, vector<int> freeVec,
                                  vector<vector<string>> &blastTemplateCopy, bool &err,
                                  vector<vector<string>> &bestTemplate, int &prevBestPoint);
-vector<vector<string>> mainAlgorithm(vector<vector<string>> blastTemplate, vector<vector<string>> possibleBlocks, vector<vector<vector<int>>> possibleBlocksInt,
+vector<vector<vector<string>>> mainAlgorithm(vector<vector<string>> blastTemplate, vector<vector<string>> possibleBlocks, vector<vector<vector<int>>> possibleBlocksInt,
                     vector<vector<vector<int>>> possibleBlocksIntCopy, vector<vector<vector<int>>> possibleBlocksIntCopy2,
                     vector<vector<string>> blastTemplateCopy,vector<vector<string>> blastTemplateCopy2,
-                    vector<vector<string>> blastTemplateCopy3, vector<vector<string>> bestTemplate,
+                    vector<vector<string>> blastTemplateCopy3, vector<vector<string>> bestTemplate, vector<vector<vector<string>>> bestTemplates,
                     int prevBestPoint);
 
-int main(){
-    vector<vector<string>> blastTemplate = {{"r0c0","r0c1","r0c2","r0c3","r0c4","r0c5","r0c6","r0c7"},
-                                            {"r1c0","r1c1","r1c2","r1c3","r1c4","r1c5","r1c6","r1c7"},
-                                            {"r2c0","r2c1","r2c2","r2c3","r2c4","r2c5","r2c6","r2c7"},
-                                            {"r3c0","r3c1","r3c2","r3c3","r3c4","r3c5","r3c6","r3c7"},
-                                            {"r4c0","r4c1","r4c2","r4c3","r4c4","r4c5","r4c6","r4c7"},
-                                            {"r5c0","r5c1","r5c2","r5c3","r5c4","r5c5","r5c6","r5c7"},
-                                            {"r6c0","r6c1","r6c2","r6c3","r6c4","r6c5","r6c6","r6c7"},
-                                            {"r7c0","r7c1","r7c2","r7c3","r7c4","r7c5o","r7c6","r7c7"}};
 
-    vector<vector<string>> possibleBlocks = {{"r6c5", "r5c5"}, {"r4c5", "r3c5", "r2c5"}, {"r1c5", "r0c5"}};
+void removeDuplicates(vector<vector<vector<string>>>& bestTemplates) {
+    for (auto& templateSet : bestTemplates) {
+        for (auto& vec : templateSet) {
+            sort(vec.begin(), vec.end());
+        }
+        sort(templateSet.begin(), templateSet.end());
+    }
+
+    sort(bestTemplates.begin(), bestTemplates.end());
+
+    auto it = unique(bestTemplates.begin(), bestTemplates.end());
+    bestTemplates.erase(it, bestTemplates.end());
+}
+
+int main(){
+    vector<vector<string>> blastTemplate = {{"r0c0","r0c1","r0c2o","r0c3","r0c4","r0c5","r0c6","r0c7"},
+                                            {"r1c0","r1c1","r1c2o","r1c3","r1c4","r1c5","r1c6","r1c7"},
+                                            {"r2c0","r2c1","r2c2o","r2c3","r2c4","r2c5","r2c6","r2c7"},
+                                            {"r3c0","r3c1","r3c2o","r3c3o","r3c4o","r3c5o","r3c6o","r3c7o"},
+                                            {"r4c0","r4c1","r4c2o","r4c3","r4c4","r4c5","r4c6","r4c7"},
+                                            {"r5c0","r5c1","r5c2o","r5c3","r5c4","r5c5","r5c6","r5c7"},
+                                            {"r6c0","r6c1","r6c2","r6c3","r6c4","r6c5","r6c6","r6c7"},
+                                            {"r7c0o","r7c1o","r7c2","r7c3o","r7c4o","r7c5o","r7c6o","r7c7o"}};
+
+    vector<vector<string>> possibleBlocks = {{"r7c2", "r6cd2"}, {"r3c0", "r3c1", "r4c0"}};
     vector<vector<vector<int>>> possibleBlocksInt = vstrToVint(possibleBlocks);
     vector<vector<vector<int>>> possibleBlocksIntCopy;
     vector<vector<vector<int>>> possibleBlocksIntCopy2;
@@ -41,6 +56,7 @@ int main(){
     vector<vector<string>> blastTemplateCopy2;
     vector<vector<string>> blastTemplateCopy3;
     vector<vector<string>> bestTemplate;
+    vector<vector<vector<string>>> bestTemplates;
     int prevBestPoint = 0;
 
     // while(true){
@@ -62,23 +78,27 @@ int main(){
     //     }
     // }
 
-    bestTemplate = mainAlgorithm(blastTemplate, possibleBlocks, possibleBlocksInt, possibleBlocksIntCopy, possibleBlocksIntCopy2,
-                    blastTemplateCopy, blastTemplateCopy2, blastTemplateCopy3, bestTemplate, prevBestPoint);
+    bestTemplates = mainAlgorithm(blastTemplate, possibleBlocks, possibleBlocksInt, possibleBlocksIntCopy, possibleBlocksIntCopy2,
+                    blastTemplateCopy, blastTemplateCopy2, blastTemplateCopy3, bestTemplate, bestTemplates, prevBestPoint);
 
-    // for(auto &row : bestTemplate){
-    //     for(auto &val : row)
-    //         cout << val << ' ';
-    //     cout << '\n';
-    // }
+    removeDuplicates(bestTemplates);
+
+    for(auto &bestTemplate : bestTemplates){
+        for(auto &row : bestTemplate){
+        for(auto &val : row)
+            cout << val << ' ';
+        cout << '\n';
+        }
+        cout << "\n\n";
+    }
     return 0;
 }
 
 // Functions
-vector<vector<string>> mainAlgorithm(vector<vector<string>> blastTemplate, vector<vector<string>> possibleBlocks, vector<vector<vector<int>>> possibleBlocksInt,
+vector<vector<vector<string>>> mainAlgorithm(vector<vector<string>> blastTemplate, vector<vector<string>> possibleBlocks, vector<vector<vector<int>>> possibleBlocksInt,
                     vector<vector<vector<int>>> possibleBlocksIntCopy, vector<vector<vector<int>>> possibleBlocksIntCopy2,
                     vector<vector<string>> blastTemplateCopy,vector<vector<string>> blastTemplateCopy2,
-                    vector<vector<string>> blastTemplateCopy3, vector<vector<string>> bestTemplate,
-                    int prevBestPoint){
+                    vector<vector<string>> blastTemplateCopy3, vector<vector<string>> bestTemplate, vector<vector<vector<string>>> bestTemplates, int prevBestPoint){
     for(auto &blocks : possibleBlocksInt){
         vector<vector<vector<int>>> rslt = distance_vector({blocks});
         for(auto &block : rslt){
@@ -132,6 +152,9 @@ vector<vector<string>> mainAlgorithm(vector<vector<string>> blastTemplate, vecto
                                                 blastTemplateCopy3.assign(blastTemplateCopy2.begin(), blastTemplateCopy2.end());
                                                 bool err3 = false;
                                                 bestTemplate = assignVal(block, freeVec, blastTemplateCopy3, err3, bestTemplate, prevBestPoint);
+                                                if(bestTemplate != blastTemplateCopy3){
+                                                    bestTemplates.push_back(bestTemplate);
+                                                }
                                             }
                                         }
                                     }
@@ -174,6 +197,9 @@ vector<vector<string>> mainAlgorithm(vector<vector<string>> blastTemplate, vecto
                                 blastTemplateCopy2.assign(blastTemplateCopy.begin(), blastTemplateCopy.end());
                                 bool err2 = false;
                                 bestTemplate = assignVal(block, freeVec, blastTemplateCopy2, err2, bestTemplate, prevBestPoint);
+                                if(bestTemplate != blastTemplateCopy2){
+                                    bestTemplates.push_back(bestTemplate);
+                                }
                             }
                         }
                     }
@@ -190,10 +216,13 @@ vector<vector<string>> mainAlgorithm(vector<vector<string>> blastTemplate, vecto
                 blastTemplateCopy.assign(blastTemplate.begin(), blastTemplate.end());
                 bool err = false;
                 bestTemplate = assignVal(block, freeVec, blastTemplateCopy, err, bestTemplate, prevBestPoint);
+                if(bestTemplate != blastTemplateCopy){
+                    bestTemplates.push_back(bestTemplate);
+                }
             }
         }
     }
-    return bestTemplate;
+    return bestTemplates;
 }
 
 
