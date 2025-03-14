@@ -1,6 +1,6 @@
 # Block Blast Solver Program  
 
-This is a **simple Block Blast solver program**. While it performs well in most scenarios, it may make suboptimal moves in highly complex games. Use it to explore strategies or automate gameplay with a straightforward yet effective approach.  
+This is a **simple Block Blast solver program**. While it performs well in most scenarios, it may make not so good moves in highly complex games.
 
 ## Running the Program  
 
